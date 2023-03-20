@@ -7,11 +7,11 @@
 int GetShape(char c)
     => c < 'D' ? c - 'A' : c - 'X';
 
-int GetGameScore(int oponent, int player)
-    => (player - oponent + 4) % 3 * 3;
+int GetGameScore(int opponent, int player)
+    => (player - opponent + 4) % 3 * 3;
 
-int GetShapeFromWinState(char a, char b)
-    => (a - 'A' + b - 'X' + 2) % 3;
+int GetShapeFromWinState(char opponent, char winState)
+    => (opponent - 'A' + winState - 'X' + 2) % 3;
 
 string[] lines = File.ReadAllLines(args[0]);
 int totalPart1Score = lines
