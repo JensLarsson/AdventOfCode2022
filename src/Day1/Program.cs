@@ -14,6 +14,6 @@ var containers = input.Split("\n\n")
     .Select(line => line.Split('\n', StringSplitOptions.RemoveEmptyEntries))
     .Select(container =>
     container.Select(item => int.TryParse(item, out int parsedVal) ? parsedVal : 0).Sum()).ToList();
-
+Console.WriteLine($"most carried calories: {containers[^1]}");
 containers.Sort();
-Console.WriteLine(containers[^1] + containers[^2] + containers[^3]);
+Console.WriteLine($"combined three most carried calories: {containers[^1] + containers[^2] + containers[^3]}");
