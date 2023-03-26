@@ -8,30 +8,28 @@ var lines = File.ReadAllLines(args[0]);
 
 int itemPriority = 0;
 int badgePriority = 0;
-foreach (string line in lines)
+for (int i = 0; i < lines.Length; i++)
 {
     // Part 1
-    int halfLenght = line.Length / 2;
-    string firstHalf = line.Substring(0, halfLenght);
-    string secondHalf = line.Substring(halfLenght, halfLenght);
+    int halfLenght = lines[i].Length / 2;
+    string firstHalf = lines[i].Substring(0, halfLenght);
+    string secondHalf = lines[i].Substring(halfLenght, halfLenght);
     foreach (char c in firstHalf)
     {
         if (secondHalf.Contains(c))
         {
-            Console.WriteLine("Found Item: " + c);
             itemPriority += char.IsLower(c) ? c - 'a' + 1 : c - 'A' + 27;
             break;
         }
     }
-}
-for (int i = 0; i < lines.Length; i += 3)
-{
+
+    if (i % 3 != 0) continue; // Skip every other line (3 lines per group
+
     // Part 2
     foreach (char c in lines[i])
     {
         if (lines[i + 1].Contains(c) && lines[i + 2].Contains(c))
         {
-            Console.WriteLine("Found Badge: " + c);
             badgePriority += char.IsLower(c) ? c - 'a' + 1 : c - 'A' + 27;
             break;
         }
