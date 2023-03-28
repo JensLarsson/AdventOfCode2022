@@ -38,6 +38,8 @@ for (int i = stackStrings.Count() - 1; i >= 0; i--)
     }
 }
 
+List<char>[] boxStackLists = boxStacks.Select(stack => stack.Reverse().ToList()).ToArray();
+
 foreach (string line in instructions)
 {
     string[] arguments = line.Split(' ');
@@ -49,13 +51,19 @@ foreach (string line in instructions)
             argNumbers.Add(argNumber);
         }
     }
-    Console.WriteLine($"Moving {argNumbers[0]} from {argNumbers[1]} to {argNumbers[2]}");
-    for (int i = 0; i < argNumbers[0]; i++)
+    int count = argNumbers[0];
+
+    //Part 1
+    for (int i = 0; i < count; i++)
     {
         boxStacks[argNumbers[2] - 1].Push(boxStacks[argNumbers[1] - 1].Pop());
     }
+    //Part2
+    var sourceList = boxStackLists[argNumbers[1] - 1];
+    boxStackLists[argNumbers[2] - 1].AddRange(sourceList.GetRange(sourceList.Count - count, count));
+    sourceList.RemoveRange(sourceList.Count - count, count);
 }
-foreach (Stack<char> stack in boxStacks)
-{
-    Console.WriteLine(stack.Pop());
-}
+
+
+Console.WriteLine(String.Concat(boxStacks.Select(stack => stack.Peek())));
+Console.WriteLine(String.Concat(boxStackLists.Select(stack => stack.Last())));
