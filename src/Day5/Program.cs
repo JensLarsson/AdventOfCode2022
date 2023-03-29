@@ -6,7 +6,7 @@
 
 string[] input = File.ReadAllLines(args[0]);
 int instructionStartIndex = 0;
-for (int i = 0; i < input.Length; i++) //Find the start of the instructions
+for (int i = 0; i < input.Length; i++)          //Find the start of the instructions
 {
     if (input[i].Contains("move"))
     {
@@ -16,25 +16,22 @@ for (int i = 0; i < input.Length; i++) //Find the start of the instructions
 }
 
 //seperate the stacks and instructions
-string[] stackStrings = input[..(instructionStartIndex - 2)];
+string[] stackStrings = input[..(instructionStartIndex - 2)].Reverse().ToArray(); //Reverse to fill bottom up later
 string[] instructions = input[instructionStartIndex..];
 
 int stackCount = input[instructionStartIndex - 2].Max<char>() - '0';
 
 Stack<char>[] boxStacks = new Stack<char>[stackCount];
-for (int i = 0; i < stackCount; i++) //initialize the stacks
-{
-    boxStacks[i] = new Stack<char>();
-}
+boxStacks = boxStacks.Select(_ => new Stack<char>()).ToArray();
 
-for (int i = stackStrings.Count() - 1; i >= 0; i--) //fill the stacks
+foreach (string stackString in stackStrings)        //fill the stacks
 {
-    string rowString = stackStrings[i].Substring(1);
-    for (int ii = 0; ii < rowString.Length; ii += 4)
+    string rowString = stackString.Substring(1);
+    for (int i = 0; i < rowString.Length; i += 4)
     {
-        if (rowString[ii] != ' ')
+        if (rowString[i] != ' ')
         {
-            boxStacks[ii / 4].Push(rowString[ii]);
+            boxStacks[i / 4].Push(rowString[i]);
         }
     }
 }
@@ -43,26 +40,21 @@ List<char>[] boxStackLists = boxStacks.Select(stack => stack.Reverse().ToList())
 
 foreach (string line in instructions)
 {
-    string[] arguments = line.Split(' ');           //split the arguments in each instruction
-    List<int> argNumbers = new List<int>();
-    foreach (string arg in arguments)               //convert the arguments to numbers
-    {
-        if (int.TryParse(arg, out int argNumber))
-        {
-            argNumbers.Add(argNumber);
-        }
-    }
-    int count = argNumbers[0];                      //the number of boxes to move
+    List<int> argNumbers = line.Split(' ')          //get the numbers from the instructions
+        .Where(s => int.TryParse(s, out _))
+        .Select(int.Parse)
+        .ToList();
+    int moves = argNumbers[0];                      //the number of boxes to move
 
     //Part 1
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < moves; i++)
     {
         boxStacks[argNumbers[2] - 1].Push(boxStacks[argNumbers[1] - 1].Pop());
     }
     //Part2
     var sourceList = boxStackLists[argNumbers[1] - 1];
-    boxStackLists[argNumbers[2] - 1].AddRange(sourceList.GetRange(sourceList.Count - count, count));
-    sourceList.RemoveRange(sourceList.Count - count, count);
+    boxStackLists[argNumbers[2] - 1].AddRange(sourceList.GetRange(sourceList.Count - moves, moves));
+    sourceList.RemoveRange(sourceList.Count - moves, moves);
 }
 
 
