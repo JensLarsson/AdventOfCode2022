@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class TreeNode
+public class TreeNode : IComparable<TreeNode>
 {
     public int FileSize { get; private set; } = 0;
     public string Name { get; private set; }
@@ -35,6 +35,14 @@ public class TreeNode
         }
         return false;
     }
+    public string GetPath()
+    {
+        if (Parent == null)
+        {
+            return Name;
+        }
+        return Parent.GetPath() + "/" + Name;
+    }
 
     public int GetTotalSize()
     {
@@ -44,5 +52,10 @@ public class TreeNode
             size += child.Value.GetTotalSize();
         }
         return size + FileSize;
+    }
+
+    public int CompareTo(TreeNode? other)
+    {
+        return this.GetTotalSize().CompareTo(other?.GetTotalSize() ?? int.MinValue);
     }
 }

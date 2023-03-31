@@ -6,9 +6,9 @@
 
 string[] input = File.ReadAllLines(args[0]);
 
+//Setup tree
 TreeNode rootNode = new TreeNode("/", null);
 TreeNode currentNode = rootNode;
-
 for (int i = 1; i < input.Length; i++)
 {
     string[] splittedString = input[i].Split(" ");
@@ -29,7 +29,7 @@ for (int i = 1; i < input.Length; i++)
     {
         if (splittedString[2] == "..")
         {
-            currentNode = currentNode.Parent ?? currentNode;
+            currentNode = currentNode.Parent ?? throw new Exception("No parent");
             continue;
         }
         currentNode = currentNode.Children
@@ -37,28 +37,57 @@ for (int i = 1; i < input.Length; i++)
         continue;
     }
 }
-int totalSize = 0;
-GetSize(rootNode, ref totalSize);
-Console.WriteLine(totalSize);
+//Sort folders by size
+List<TreeNode> nodes = new List<TreeNode>() { rootNode };
+GetAllFolders(ref nodes, rootNode.Children);
+nodes.Sort();
 
-static void GetSize(TreeNode node, ref int totalSize)
+//Part 1
+int totalSizePartA = 0;
+foreach (var node in nodes)
 {
-    int size = node.GetTotalSize();
-    // foreach (var child in node.Children ?? new Dictionary<string, TreeNode>())
-    // {
-    //     size += child.Value.GetTotalSize();
-    //     GetSize(child.Value, ref totalSize);
-    // }
-    if (size < 100000)
+    if (node.GetTotalSize() > 100000)
     {
-        totalSize += size;
+        break;
     }
-    foreach (var child in node.Children ?? new Dictionary<string, TreeNode>())
+    totalSizePartA += node.GetTotalSize();
+}
+Console.WriteLine("Part1: " + totalSizePartA);
+
+//part 2
+int rootSize = rootNode.GetTotalSize();
+int sizeNeeded = 70000000 - 30000000 - rootSize;    //calculate size needed to remove
+if (sizeNeeded > 0)                                 //if size needed is positive, then nothing needs to be removed
+{
+    Console.WriteLine("Part2: " + 0);
+    return;
+}
+sizeNeeded *= -1;                                   //make size needed positive
+
+foreach (var node in nodes)                         //find first node that is bigger than size needed
+{
+    if (node.GetTotalSize() > sizeNeeded)
     {
-        if (child.Value.Children == null)
+        Console.WriteLine("Part2: " + node.GetTotalSize());
+        break;
+    }
+}
+
+
+/// <summary>
+/// Recursively gets all folders 
+/// </summary>
+/// <param name="nodes">Return list to put nodes in</param>
+/// <param name="children">child nodes to recursively add</param>
+static void GetAllFolders(ref List<TreeNode> nodes, Dictionary<string, TreeNode> children)
+{
+    foreach (var child in children?.Values ?? new Dictionary<string, TreeNode>().Values)
+    {
+        if (child.Children == null)
         {
             continue;
         }
-        GetSize(child.Value, ref totalSize);
+        nodes.Add(child);
+        GetAllFolders(ref nodes, child.Children);
     }
 }
