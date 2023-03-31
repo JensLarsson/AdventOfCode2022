@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+//TODO: Calculate the FilSize of Folders on ADDING  and REMOVING files instead of on request
 public class TreeNode : IComparable<TreeNode>
 {
     public int FileSize { get; private set; } = 0;
