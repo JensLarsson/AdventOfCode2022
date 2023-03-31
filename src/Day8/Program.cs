@@ -5,48 +5,45 @@
 }
 
 string[] heightMap = File.ReadAllLines(args[0]);
-int patchWidth = heightMap[0].Length;
-bool[,] vissibilityMap = new bool[heightMap.Length, patchWidth];
-Console.WriteLine(vissibilityMap.Cast<bool>().Count(b => b));
 
-int vissibleTrees = 0;
+int patchWidth = heightMap[0].Length;
+bool[,] visibilityMap = new bool[heightMap.Length, patchWidth];
+int[,] scenicScoreMap = new int[heightMap.Length, patchWidth];
+
+//part1
 for (int y = 1; y < heightMap.Length - 1; y++)
 {
-    //Left to right
     for (int x = 1; x < heightMap[y].Length - 1; x++)
     {
-        vissibilityMap[y, x] = vissibilityMap[y, x] || IsTallestChar(heightMap[y][x], heightMap[y][..x]);
-    }
-    //Left to right
-    for (int x = heightMap[y].Length - 2; x > 0; x--)
-    {
-        string comparison = new string(heightMap[y][(x + 1)..]);
-        vissibilityMap[y, x] = vissibilityMap[y, x] || IsTallestChar(heightMap[y][x], comparison);
-    }
-    //Top to bottom
-    for (int x = 1; x < heightMap[y].Length - 1; x++)
-    {
-        string comparison = new string(heightMap[..y].Select(s => s[x]).ToArray());
-        vissibilityMap[y, x] = vissibilityMap[y, x] || IsTallestChar(heightMap[y][x], comparison);
-    }
-    //Bottom to top
-    for (int x = 1; x < heightMap[y].Length - 1; x++)
-    {
-        string comparison = new string(heightMap[(y + 1)..].Select(s => s[x]).ToArray());
-        vissibilityMap[y, x] = vissibilityMap[y, x] || IsTallestChar(heightMap[y][x], comparison);
+        //Left to right
+        string treesToLeft = new string(heightMap[y][..x].Reverse().ToArray());
+        visibilityMap[y, x] = visibilityMap[y, x] || IsTallestChar(heightMap[y][x], treesToLeft);
+        scenicScoreMap[y, x] = getVissibleTrees(heightMap[y][x], treesToLeft);
+
+        //Top to bottom
+        string treesAbove = new string(heightMap[..y].Select(s => s[x]).Reverse().ToArray());
+        visibilityMap[y, x] = visibilityMap[y, x] || IsTallestChar(heightMap[y][x], treesAbove);
+        scenicScoreMap[y, x] *= getVissibleTrees(heightMap[y][x], treesAbove);
+
+        //Left to right
+        string treesToRight = new string(heightMap[y][(x + 1)..]);
+        visibilityMap[y, x] = visibilityMap[y, x] || IsTallestChar(heightMap[y][x], treesToRight);
+        scenicScoreMap[y, x] *= getVissibleTrees(heightMap[y][x], treesToRight);
+
+        //Bottom to top
+        string treesBelow = new string(heightMap[(y + 1)..].Select(s => s[x]).ToArray());
+        visibilityMap[y, x] = visibilityMap[y, x] || IsTallestChar(heightMap[y][x], treesBelow);
+        scenicScoreMap[y, x] *= getVissibleTrees(heightMap[y][x], treesBelow);
     }
 }
 
-for (int i = 0; i < vissibilityMap.GetLength(0); i++)
-{
-    for (int j = 0; j < vissibilityMap.GetLength(1); j++)
-    {
-        Console.Write(vissibilityMap[i, j] ? "1" : "0");
-    }
-    Console.WriteLine(); // move to the next line after printing each row
-}
-int vissibleTreeCount = vissibilityMap.Cast<bool>().Count(b => b) + heightMap.Length * 2 + patchWidth * 2 - 4;
-Console.WriteLine("vissible trees from the outside: " + vissibleTreeCount);
+int visibleTreeCount = visibilityMap.Cast<bool>().Count(b => b);  //calculate visible trees from the inside
+visibleTreeCount += heightMap.Length * 2 + patchWidth * 2 - 4;     //add trees on boarder
+Console.WriteLine("vissible trees from the outside: " + visibleTreeCount);
+
+int highestScenicScore = scenicScoreMap.Cast<int>().Max();          //Get highest scenic score
+Console.WriteLine("highest scenic score: " + highestScenicScore);
+
 
 
 bool IsTallestChar(char c, string comparison)
@@ -59,4 +56,18 @@ bool IsTallestChar(char c, string comparison)
         }
     }
     return true;
+}
+
+int getVissibleTrees(char c, string comparison)
+{
+    int visibleTrees = 0;
+    foreach (char c2 in comparison)
+    {
+        visibleTrees++;
+        if (c2 >= c)
+        {
+            return visibleTrees;
+        }
+    }
+    return visibleTrees;
 }
