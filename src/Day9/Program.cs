@@ -5,48 +5,56 @@
 }
 
 int size = 1000;
+int snakeLength = 10;
 bool[,] visitationMap = new bool[size, size];
 
-int headX = size / 2;
-int headY = size / 2;
+int[] snakeX = Enumerable.Range(0, snakeLength).Select(i => size / 2).ToArray();
+int[] snakeY = Enumerable.Range(0, snakeLength).Select(i => size / 2).ToArray();
 
-int tailX = size / 2;
-int tailY = size / 2;
 
-foreach (string line in File.ReadAllLines(args[0]))
+foreach (string line in File.ReadAllLines(args[0])) //for each instruction
 {
     string[] instructions = line.Split(' ');
-    int steps = int.Parse(instructions[1]);
-    for (int i = 0; i < steps; i++)
+    int steps = int.Parse(instructions[1]);         //How many moves instructed
+    for (int step = 0; step < steps; step++)
     {
+        //move head
         switch (instructions[0])
         {
             case "L":
-                headX--;
+                snakeX[0]--;
                 break;
             case "R":
-                headX++;
+                snakeX[0]++;
                 break;
             case "U":
-                headY++;
+                snakeY[0]++;
                 break;
             case "D":
-                headY--;
+                snakeY[0]--;
                 break;
         }
-        int directionX = headX - tailX;
-        int directionY = headY - tailY;
-
-        int absX = Math.Abs(directionX);
-        int absY = Math.Abs(directionY);
-        if (absX > 1 || absY > 1)
+        //move body
+        for (int i = 1; i < snakeX.Length; i++)
         {
-            if (directionX != 0)
-                tailX += directionX / absX;
-            if (directionY != 0)
-                tailY += directionY / absY;
+            int directionX = snakeX[i - 1] - snakeX[i];
+            int directionY = snakeY[i - 1] - snakeY[i];
+
+            int absX = Math.Abs(directionX);
+            int absY = Math.Abs(directionY);
+            if (absX > 1 || absY > 1)                   //only move i part is 2 or more spaces away
+            {
+                if (directionX != 0)
+                {
+                    snakeX[i] += directionX / absX;
+                }
+                if (directionY != 0)
+                {
+                    snakeY[i] += directionY / absY;
+                }
+            }
+            visitationMap[snakeY[^1], snakeX[^1]] = true; //use position of last part of tail to mark visited
         }
-        visitationMap[tailY, tailX] = true;
     }
 }
 
