@@ -22,24 +22,23 @@
                 case "noop":        //no operation
                     instructionCount++;
                     totalSignalValue += HandleInstructionTick(registerValue, instructionCount);
+                    PrintOutputString(registerValue, instructionCount);
                     break;
                 case "addx":        //add x to register
                     instructionCount++;
                     totalSignalValue += HandleInstructionTick(registerValue, instructionCount);
+                    PrintOutputString(registerValue, instructionCount);
                     instructionCount++;
-                    registerValue += int.Parse(instructions[1]);
                     totalSignalValue += HandleInstructionTick(registerValue, instructionCount);
+                    registerValue += int.Parse(instructions[1]);
+                    PrintOutputString(registerValue, instructionCount);
                     break;
             }
         }
         Console.WriteLine(totalSignalValue);
     }
 
-
-    /// <summary>
-    /// Returns the signal value if on a designated instruction(20, or every 40 after that), otherwise return 0
-    /// </summary>
-    static int HandleInstructionTick(int registerValue, int instructionCount)
+    static void PrintOutputString(int registerValue, int instructionCount)
     {
         int i = instructionCount % 40;
         outputString[i] = (i >= registerValue - 1 && i <= registerValue + 1) ? '#' : '.';
@@ -48,6 +47,13 @@
         {
             Console.WriteLine(outputString);
         }
+    }
+
+    /// <summary>
+    /// Returns the signal value if on a designated instruction(20, or every 40 after that), otherwise return 0
+    /// </summary>
+    static int HandleInstructionTick(int registerValue, int instructionCount)
+    {
 
         if ((instructionCount - 20) % 40 == 0)
         {
