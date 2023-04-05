@@ -1,5 +1,6 @@
 ﻿class Program
 {
+    static char[] outputString = new char[40];
     static void Main(string[] args)
     {
         if (args.Length == 0)
@@ -12,21 +13,22 @@
         int registerValue = 1;
         int instructionCount = 0;
         int totalSignalValue = 0;
+
         foreach (string line in lines)
         {
             string[] instructions = line.Split(' ');
             switch (instructions[0])
             {
-                case "noop":
+                case "noop":        //no operation
                     instructionCount++;
-                    totalSignalValue += CheckAndGetRegisterSignalValue(registerValue, instructionCount);
+                    totalSignalValue += HandleInstructionTick(registerValue, instructionCount);
                     break;
-                case "addx":
+                case "addx":        //add x to register
                     instructionCount++;
-                    totalSignalValue += CheckAndGetRegisterSignalValue(registerValue, instructionCount);
+                    totalSignalValue += HandleInstructionTick(registerValue, instructionCount);
                     instructionCount++;
-                    totalSignalValue += CheckAndGetRegisterSignalValue(registerValue, instructionCount);
                     registerValue += int.Parse(instructions[1]);
+                    totalSignalValue += HandleInstructionTick(registerValue, instructionCount);
                     break;
             }
         }
@@ -37,8 +39,16 @@
     /// <summary>
     /// Returns the signal value if on a designated instruction(20, or every 40 after that), otherwise return 0
     /// </summary>
-    static int CheckAndGetRegisterSignalValue(int registerValue, int instructionCount)
+    static int HandleInstructionTick(int registerValue, int instructionCount)
     {
+        int i = instructionCount % 40;
+        outputString[i] = (i >= registerValue - 1 && i <= registerValue + 1) ? '#' : '.';
+
+        if (instructionCount % 40 == 0)
+        {
+            Console.WriteLine(outputString);
+        }
+
         if ((instructionCount - 20) % 40 == 0)
         {
             return registerValue * instructionCount;
