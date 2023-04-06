@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Numerics;
+﻿using System.Numerics;
 
 class Monkey : IComparable<Monkey>
 {
@@ -50,8 +49,6 @@ class Program
             });
         }
 
-        Stopwatch watch = new Stopwatch();
-        watch.Start();
         for (int round = 0; round < rounds; round++)
         {
             foreach (var monkey in monkeys)
@@ -74,8 +71,6 @@ class Program
                 monkey.Items = new List<BigInteger>();
             }
         }
-        watch.Stop();
-        Console.WriteLine($"Took {watch.ElapsedMilliseconds}ms to run {rounds} rounds");
         foreach (var monkey in monkeys)
         {
             Console.WriteLine($"Monkey {monkeys.IndexOf(monkey)} inspected {monkey.ItemsInspected} items");
