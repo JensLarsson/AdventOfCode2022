@@ -91,11 +91,11 @@ class Program
     static Func<BigInteger, BigInteger> GetOperation(string instruction)
     {
         var instructions = instruction.Split(' ');
-        bool useParsedVal = BigInteger.TryParse(instructions[^1], out BigInteger y);
+        bool useParsedVal = BigInteger.TryParse(instructions[^1], out BigInteger parseOut);
         return instructions[^2] switch
         {
-            "+" => x => x + (useParsedVal ? y : x),    //assume that failed parse means use old value
-            "*" => x => x * (useParsedVal ? y : x),    //assume that failed parse means use old value
+            "+" => x => x + (useParsedVal ? parseOut : x),    //assume that failed parse means use old value
+            "*" => x => x * (useParsedVal ? parseOut : x),    //assume that failed parse means use old value
             _ => throw new ArgumentException("Invalid instruction")
         };
     }
