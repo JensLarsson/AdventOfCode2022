@@ -14,10 +14,12 @@
         List<List<int>> itemValues = new List<List<int>>();
         for (int i = 0; i < input.Length; i += 7)
         {
+            //get item values for each monkey, add them later
             itemValues.Add(input[i + 1].Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(x => int.TryParse(x, out _))
                 .Select(x => int.Parse(x))
                 .ToList());
+            //create monkeys
             monkeys.Add(new Monkey
             {
                 Index = int.Parse(input[i].Split(new char[] { ':', ' ' }, StringSplitOptions.RemoveEmptyEntries)[^1]),
@@ -27,33 +29,32 @@
                 OnFalseTarget = int.Parse(input[i + 5].Split(' ')[^1])
             });
         }
+
         List<int> divisors = monkeys.Select(x => x.Divisor).ToList();
         for (int i = 0; i < monkeys.Count; i++)
         {   //create items for each monkey
-            monkeys[i].Items = itemValues[i].Select(x => new Item(divisors, x)).ToList();
+            monkeys[i].Items = new Queue<Item>(itemValues[i].Select(x => new Item(divisors, x)));
         }
 
         for (int round = 0; round < rounds; round++)
         {
             foreach (var monkey in monkeys)
             {
-                monkey.ItemsInspected += (ulong)monkey.Items.Count;
+                monkey.ItemsInspected += (ulong)monkey.Items.Count;     //count items inspected before processing
 
-                for (int i = 0; i < monkey.Items.Count; i++)
+                while (monkey.Items.Count > 0)
                 {
-                    monkey.Items[i].RunOperator(monkey.Operation);
-                    int newItemScore = monkey.Items[i].ValuesPerMonkey[monkey.Index];
-                    if ((newItemScore % monkey.Divisor) == 0)
+                    var item = monkey.Items.Dequeue();
+                    item.RunOperator(monkey.Operation);
+                    if (item.ValuesPerMonkey[monkey.Index] % monkey.Divisor == 0)
                     {
-                        monkeys[monkey.OnTrueTarget].Items.Add(monkey.Items[i]);
+                        monkeys[monkey.OnTrueTarget].Items.Enqueue(item);
                     }
                     else
                     {
-                        monkeys[monkey.OnFalseTarget].Items.Add(monkey.Items[i]);
+                        monkeys[monkey.OnFalseTarget].Items.Enqueue(item);
                     }
                 }
-                // Clear the items list
-                monkey.Items.Clear();
             }
         }
 

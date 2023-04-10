@@ -1,6 +1,6 @@
 public class Monkey : IComparable<Monkey>
 {
-    public List<Item> Items { get; set; } = new List<Item>();
+    public Queue<Item> Items { get; set; } = new Queue<Item>();
     public Func<int, int> Operation { get; init; }
     public int Index { get; init; }
     public int Divisor { get; init; }
