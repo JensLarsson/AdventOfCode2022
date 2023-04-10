@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Numerics;
-
-class Item
+﻿class Item
 {
     public List<int> ValuesPerMonkey { get; init; }
     public List<int> Divisors { get; init; }
@@ -81,10 +78,6 @@ class Program
             monkeys[i].Items = itemValues[i].Select(x => new Item(divisors, x)).ToList();
         }
 
-
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
-
         for (int round = 0; round < rounds; round++)
         {
             foreach (var monkey in monkeys)
@@ -108,8 +101,6 @@ class Program
                 monkey.Items.Clear();
             }
         }
-        sw.Stop();
-        Console.WriteLine($"Time elapsed: {sw.ElapsedMilliseconds} ms");
 
         foreach (var monkey in monkeys)
         {
