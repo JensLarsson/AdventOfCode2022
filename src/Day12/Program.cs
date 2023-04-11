@@ -13,7 +13,7 @@
         int[,] charArray = new int[rowCount, columnCount];
         GridPosition start = null;
         GridPosition goal = null;
-
+        List<GridPosition> potentialStarts = new List<GridPosition>();
 
         for (int i = 0; i < rowCount; i++)
         {
@@ -31,6 +31,10 @@
                     charArray[i, j] = 27;               //End on 27
                     continue;
                 }
+                if (lines[i][j] == 'a')
+                {
+                    potentialStarts.Add(new GridPosition(i, j));
+                }
                 charArray[i, j] = lines[i][j] - '`';    //Convert to int where 'a' is 1 and 'z' is 26
             }
         }
@@ -40,7 +44,15 @@
             return;
         }
 
+        //Find the shortest path from any of the potential start positions
+        var shortestPath = potentialStarts
+            .Select(p => AStar.FindPath(charArray, p, goal, 1))
+            .OrderBy(p => p?.Count ?? int.MaxValue)
+            .FirstOrDefault();
+
+
         var path = AStar.FindPath(charArray, start, goal, 1);
-        Console.WriteLine((path?.Count ?? 0) - 1);
+        Console.WriteLine("shortest path up lenght:" + ((path?.Count ?? 0) - 1));
+        Console.WriteLine("lenght of path to closest potential startingpoint: " + ((shortestPath?.Count ?? 0) - 1));
     }
 }
