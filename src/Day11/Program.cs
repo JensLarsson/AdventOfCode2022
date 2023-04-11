@@ -2,14 +2,13 @@
 {
     static void Main(string[] args)
     {
-        if (args.Length != 3)
+        if (args.Length != 2)
         {
-            Console.WriteLine("Usage: provide input file in form of txt file, number of rounds as second arg, and relief division as third arg");
+            Console.WriteLine("Usage: provide input file in form of txt file, and number of rounds as second arg");
             return;
         }
         var input = File.ReadAllLines(args[0]);
         int rounds = int.Parse(args[1]);
-        int reliefDivision = int.Parse(args[2]);
 
         List<Monkey> monkeys = new List<Monkey>();
         List<List<int>> itemValues = new List<List<int>>();
