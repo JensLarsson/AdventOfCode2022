@@ -1,11 +1,12 @@
 using System.Text.Json;
-class Package : IComparable<Package>
+class Package : IComparable<Package>, IEquatable<Package>
 {
     public JsonDocument Signal { get; init; }
-
+    public string SignalString { get; init; }
     public Package(string signal)
     {
         this.Signal = JsonDocument.Parse(signal);
+        this.SignalString = signal;
     }
 
     public int CompareTo(Package? other)
@@ -44,5 +45,10 @@ class Package : IComparable<Package>
         }
         // If we get here, we have compared all the properties and they are all equal
         return leftLenght.CompareTo(rightLenght);
+    }
+
+    public bool Equals(Package? other)
+    {
+        return this.SignalString.Equals(other?.SignalString);
     }
 }
