@@ -14,7 +14,10 @@
             .ToList();
 
         //Part 1
-        IEnumerable<int> result = GetRightOrderListIndexes(packages);
+        IEnumerable<int> result = Enumerable.Range(0, packages.Count / 2)
+            .Where(i => packages[2 * i].CompareTo(packages[2 * i + 1]) <= 0)        //Ignore packages of wrong order
+            .Select(i => i + 1);                                                    //add 1 since the challenge is 1-based
+
         Console.WriteLine("part1:" + result.Sum());
 
         //Part 2
@@ -22,21 +25,7 @@
         packages.AddRange(newPackages);
         packages.Sort();
 
-        //collect indexes of new packages
-        //add 1 since the challenge is 1-based
-        IEnumerable<int> indexes = newPackages.Select(p => packages.IndexOf(p) + 1);
+        IEnumerable<int> indexes = newPackages.Select(p => packages.IndexOf(p) + 1);//add 1 since the challenge is 1-based
         Console.WriteLine("part2: " + indexes.Aggregate((x, y) => x * y));
-
-    }
-
-    static IEnumerable<int> GetRightOrderListIndexes(List<Package> packages)
-    {
-        for (int i = 0; i < packages.Count; i += 2)
-        {
-            if (packages[i].CompareTo(packages[i + 1]) <= 0)
-            {
-                yield return (i + 2) / 2;
-            }
-        }
     }
 }
