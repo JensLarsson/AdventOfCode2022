@@ -43,12 +43,49 @@
             FillLinesInMap(line, botLeft, ref map);
         }
 
+        PrintMap(map);
 
 
-
-
+        Vector2 sandPos = sandHole - botLeft;
+        int count = 0;
+        while (true)
+        {
+            if (sandPos.Y == map.GetLength(1) - 1)
+            {
+                break;
+            }
+            if (!map[sandPos.X, sandPos.Y + 1])
+            {
+                sandPos.Y += 1;
+                continue;
+            }
+            if (sandPos.X == 0)
+            {
+                break;
+            }
+            if (!map[sandPos.X - 1, sandPos.Y + 1])
+            {
+                sandPos.X -= 1;
+                sandPos.Y += 1;
+                continue;
+            }
+            if (sandPos.X == map.GetLength(0) - 1)
+            {
+                break;
+            }
+            if (!map[sandPos.X + 1, sandPos.Y + 1])
+            {
+                sandPos.X += 1;
+                sandPos.Y += 1;
+                continue;
+            }
+            map[sandPos.X, sandPos.Y] = true;
+            sandPos = sandHole - botLeft;
+            count++;
+        }
 
         PrintMap(map);
+        Console.WriteLine(count);
     }
 
     public static void PrintMap(bool[,] map)
