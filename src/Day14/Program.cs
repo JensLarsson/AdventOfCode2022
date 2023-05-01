@@ -16,37 +16,41 @@
             .Select(s => s.Split(" -> ")                                //String array for each line
                 .Select(xyString => new Vector2(xyString)).ToList());   //cast string array to vector2 list
 
-        Vector2 botLeft = new Vector2(int.MaxValue, int.MaxValue);
-        Vector2 topRight = new Vector2(0, 0);
+        Vector2 topLeft = new Vector2(int.MaxValue, int.MaxValue);
+        Vector2 botRight = new Vector2(0, 0);
 
 
-        botLeft.X = Math.Min(sandHole.X, botLeft.X);
-        botLeft.Y = Math.Min(sandHole.Y, botLeft.Y);
-        topRight.X = Math.Max(sandHole.X, topRight.X);
-        topRight.Y = Math.Max(sandHole.Y, topRight.Y);
+        topLeft.X = Math.Min(sandHole.X, topLeft.X);
+        topLeft.Y = Math.Min(sandHole.Y, topLeft.Y);
+        botRight.X = Math.Max(sandHole.X, botRight.X);
+        botRight.Y = Math.Max(sandHole.Y, botRight.Y);
 
         foreach (List<Vector2> line in lines)
         {
             foreach (Vector2 point in line)
             {
-                botLeft.X = Math.Min(point.X, botLeft.X);
-                botLeft.Y = Math.Min(point.Y, botLeft.Y);
-                topRight.X = Math.Max(point.X, topRight.X);
-                topRight.Y = Math.Max(point.Y, topRight.Y);
+                topLeft.X = Math.Min(point.X, topLeft.X);
+                topLeft.Y = Math.Min(point.Y, topLeft.Y);
+                botRight.X = Math.Max(point.X, botRight.X);
+                botRight.Y = Math.Max(point.Y, botRight.Y);
             }
         }
 
-        bool[,] map = new bool[topRight.X - botLeft.X + 1, topRight.Y - botLeft.Y + 1];
+        bool[,] part1Map = new bool[botRight.X - topLeft.X + 1, botRight.Y - topLeft.Y + 1];
 
         foreach (var line in lines)
         {
-            FillLinesInMap(line, botLeft, ref map);
+            FillLinesInMap(line, topLeft, ref part1Map);
         }
 
-        PrintMap(map);
+        int countPart1 = FillWithSand(sandHole - topLeft, part1Map);
+        PrintMap(part1Map);
+        Console.WriteLine(countPart1);
+    }
 
-
-        Vector2 sandPos = sandHole - botLeft;
+    private static int FillWithSand(Vector2 sandHole, bool[,] map)
+    {
+        Vector2 sandPos = sandHole;
         int count = 0;
         while (true)
         {
@@ -80,23 +84,21 @@
                 continue;
             }
             map[sandPos.X, sandPos.Y] = true;
-            sandPos = sandHole - botLeft;
+            sandPos = sandHole;
             count++;
         }
-
-        PrintMap(map);
-        Console.WriteLine(count);
+        return count;
     }
 
-    public static void PrintMap(bool[,] map)
+    private static void PrintMap(bool[,] map)
     {
-        int rows = map.GetLength(1);
         int cols = map.GetLength(0);
-        for (int i = 0; i < rows; i++)
+        int rows = map.GetLength(1);
+        for (int y = 0; y < rows; y++)
         {
-            for (int j = 0; j < cols; j++)
+            for (int x = 0; x < cols; x++)
             {
-                if (map[j, i])
+                if (map[x, y])
                 {
                     Console.Write('#');
                 }
@@ -109,7 +111,7 @@
         }
     }
 
-    public static void FillLinesInMap(List<Vector2> edges, Vector2 offset, ref bool[,] map)
+    private static void FillLinesInMap(List<Vector2> edges, Vector2 offset, ref bool[,] map)
     {
         for (int i = 1; i < edges.Count; i += 1)
         {
