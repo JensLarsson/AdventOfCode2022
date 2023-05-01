@@ -1,4 +1,4 @@
-struct Vector2
+struct Vector2 : IEquatable<Vector2>
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -17,9 +17,31 @@ struct Vector2
     {
         return new Vector2(a.X - b.X, a.Y - b.Y);
     }
+    public static Vector2 operator +(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.X + b.X, a.Y + b.Y);
+    }
 
     public override string ToString()
     {
         return $"({X}:{Y})";
+    }
+    public static bool operator ==(Vector2 left, Vector2 right)
+    {
+        if (ReferenceEquals(left, null))
+        {
+            return ReferenceEquals(right, null);
+        }
+
+        return left.Equals(right);
+    }
+    public static bool operator !=(Vector2 left, Vector2 right)
+    {
+        return !(left == right);
+    }
+
+    public bool Equals(Vector2 other)
+    {
+        return X == other.X && Y == other.Y;
     }
 }
