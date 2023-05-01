@@ -43,12 +43,26 @@
             FillLinesInMap(line, topLeft, ref part1Map);
         }
 
-        int countPart1 = FillWithSand(sandHole - topLeft, part1Map);
-        PrintMap(part1Map);
-        Console.WriteLine(countPart1);
+        int mapWidth = part1Map.GetLength(0);
+        int mapHeight = part1Map.GetLength(1);
+        int newMapWidth = mapWidth + 2 + mapHeight * 2;
+        Vector2 part2Offset = new Vector2(mapHeight, 0);
+        bool[,] part2Map = CopyArray(part1Map, newMapWidth, mapHeight + 2, part2Offset);
+
+        for (int x = 0; x < newMapWidth; x++)
+        {
+            part2Map[x, mapHeight + 1] = true;
+        }
+
+        int countPart1 = FillWithSand(part1Map, sandHole - topLeft);
+        Console.WriteLine("Part1: " + countPart1);
+
+        int countPart2 = FillWithSand(part2Map, sandHole - topLeft + part2Offset);
+        Console.WriteLine("Part2: " + countPart2);
+
     }
 
-    private static int FillWithSand(Vector2 sandHole, bool[,] map)
+    private static int FillWithSand(bool[,] map, Vector2 sandHole)
     {
         Vector2 sandPos = sandHole;
         int count = 0;
@@ -83,11 +97,35 @@
                 sandPos.Y += 1;
                 continue;
             }
+            if (sandPos == sandHole)
+            {
+                count++;
+                break;
+            }
             map[sandPos.X, sandPos.Y] = true;
             sandPos = sandHole;
             count++;
         }
         return count;
+    }
+
+    private static bool[,] CopyArray(bool[,] map, int newWidth, int newHeight, Vector2 offset)
+    {
+        int originalWidth = map.GetLength(0);
+        int originalHeight = map.GetLength(1);
+
+        // Create the new larger array
+        bool[,] newArray = new bool[newWidth, newHeight];
+
+        // Copy the elements from the original array to the new larger array
+        for (int y = 0; y < originalHeight; y++)
+        {
+            for (int x = 0; x < originalWidth; x++)
+            {
+                newArray[x + offset.X, y + offset.Y] = map[x, y];
+            }
+        }
+        return newArray;
     }
 
     private static void PrintMap(bool[,] map)
