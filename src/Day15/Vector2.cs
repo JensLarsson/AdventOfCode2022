@@ -13,6 +13,13 @@ struct Vector2 : IEquatable<Vector2>
         X = int.Parse(XY[0]);
         Y = int.Parse(XY[1]);
     }
+
+    public static int GetManhattanDistance(Vector2 a, Vector2 b)
+    {
+        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+    }
+
+
     public static Vector2 operator -(Vector2 a, Vector2 b)
     {
         return new Vector2(a.X - b.X, a.Y - b.Y);
