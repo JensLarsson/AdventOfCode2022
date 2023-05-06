@@ -34,8 +34,25 @@ class Program
             bottomRight.Y = Math.Max(bottomRight.Y, sensor.Position.Y);
             bottomRight.Y = Math.Max(bottomRight.Y, sensor.ClosestBeacon.Y);
         }
-        Console.WriteLine($"Top left: {topLeft}");
-        Console.WriteLine($"Bottom right: {bottomRight}");
+        string[] map = new string[bottomRight.Y - topLeft.Y + 1];
+        //fill map with '.' for width
+        for (int i = 0; i < map.Length; i++)
+        {
+            map[i] = new string('.', bottomRight.X - topLeft.X + 1);
+        }
+        foreach (Sensor sensor in sensors)
+        {
+            Vector2 pos = sensor.Position - topLeft;
+            Vector2 beacon = sensor.ClosestBeacon - topLeft;
+            map[pos.Y] = map[pos.Y].Remove(pos.X, 1).Insert(pos.X, "S");
+            map[beacon.Y] = map[beacon.Y].Remove(beacon.X, 1).Insert(beacon.X, "B");
+        }
+
+        //print map
+        foreach (string line in map)
+        {
+            Console.WriteLine(line);
+        }
 
     }
 
