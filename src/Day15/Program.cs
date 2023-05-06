@@ -44,6 +44,22 @@ class Program
         {
             Vector2 pos = sensor.Position - topLeft;
             Vector2 beacon = sensor.ClosestBeacon - topLeft;
+            int distance = Vector2.GetManhattanDistance(pos, beacon);
+
+            //Manhattan distance loop
+            for (int y = 0; y < map.Length; y++)
+            {
+                for (int x = 0; x < map[y].Length; x++)
+                {
+                    Vector2 current = new Vector2(x, y);
+                    int currentDistance = Vector2.GetManhattanDistance(current, pos);
+                    if (currentDistance <= distance)
+                    {
+                        map[y] = map[y].Remove(x, 1).Insert(x, "#");
+                    }
+                }
+            }
+
             map[pos.Y] = map[pos.Y].Remove(pos.X, 1).Insert(pos.X, "S");
             map[beacon.Y] = map[beacon.Y].Remove(beacon.X, 1).Insert(beacon.X, "B");
         }
@@ -54,6 +70,8 @@ class Program
             Console.WriteLine(line);
         }
 
+        int count = map[10].Count(c => c == '#');
+        Console.WriteLine($"Part 1: {count}");
     }
 
     static IEnumerable<Sensor> GetSensorData(string[] lines)
