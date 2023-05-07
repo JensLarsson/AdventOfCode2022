@@ -19,6 +19,10 @@ struct Vector2 : IEquatable<Vector2>
         return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
     }
 
+    public static Vector2 operator /(Vector2 a, int b)
+    {
+        return new Vector2(a.X / b, a.Y / b);
+    }
 
     public static Vector2 operator -(Vector2 a, Vector2 b)
     {
