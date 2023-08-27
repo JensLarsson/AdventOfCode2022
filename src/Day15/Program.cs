@@ -27,9 +27,6 @@ class Program
         IEnumerable<SensorRect> yOverlappingSensors = sensors
              .Where(s => s.OverlapY(lineToScan))
              .Select(s => new SensorRect(s, lineToScan));
-        // IEnumerable<SensorRect> yOverlappingSensors = sensors
-        //     .Select(s => new SensorRect(s))
-        //     .Where(s => SensorRect.OverlapY(s, lineToScan));
 
 
         Console.WriteLine(yOverlappingSensors.Count());

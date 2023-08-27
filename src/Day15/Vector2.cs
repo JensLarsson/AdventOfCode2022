@@ -1,4 +1,4 @@
-struct Vector2 : IEquatable<Vector2>
+class Vector2 : IEquatable<Vector2>
 {
     public int X { get; set; }
     public int Y { get; set; }
